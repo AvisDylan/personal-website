@@ -17,3 +17,49 @@ if(!codingSincePassed)
 
 document.getElementById("coding-since").textContent = programmingSince;
 document.getElementById("age").textContent = age;
+
+const background = document.body
+
+let currentX = 0
+let currentY = 0
+
+function getTarget(){
+    return {
+        x: (Math.random() * 40 - 20),
+        y: (Math.random() * 40 - 20)
+    }
+}
+
+function animateTo(target, duration = 30_000){
+    const startX = currentX
+    const startY = currentY
+
+    const deltaX = target.x - startX
+    const deltaY = target.y - startY
+
+    const startTime = performance.now()
+
+    function frame(now){
+        const t = Math.min((now - startTime) / duration, 1)
+
+        const ease = Math.sin(t * Math.PI / 2)
+
+        const newX = startX + deltaX * ease;
+        const newY = startY + deltaY * ease;
+
+        background.style.setProperty("--bg-x", newX + "%");
+        background.style.setProperty("--bg-y", newY + "%");
+
+        if (t < 1)
+            requestAnimationFrame(frame);
+        else {
+            currentX = target.x;
+            currentY = target.y;
+            animateTo(getTarget(), duration);
+        }
+    }
+
+    requestAnimationFrame(frame)
+}
+
+animateTo(getTarget(), 5_000)
